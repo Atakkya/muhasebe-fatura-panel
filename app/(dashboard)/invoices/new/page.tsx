@@ -15,6 +15,9 @@ export default function NewInvoicePage() {
   const [initialData, setInitialData] = useState<Partial<Invoice>>({})
   const [extractedFields, setExtractedFields] = useState<(keyof Invoice)[]>([])
   const [source, setSource] = useState<'qr_scan' | 'file_upload' | 'manual'>('manual')
+  const [qrData, setQrData] = useState<string | null>(null)
+  const [qrEttn, setQrEttn] = useState<string | null>(null)
+  const [ettnMismatch, setEttnMismatch] = useState(false)
 
   function handleQrScan(raw: string) {
     setShowQr(false)
@@ -30,9 +33,20 @@ export default function NewInvoicePage() {
     setStep('form')
   }
 
+  function handleQrDetectedFromFile(raw: string) {
+    setQrData(raw)
+    const parsed = parseQrCode(raw)
+    setQrEttn(parsed.ettn ?? null)
+  }
+
   function handleExtracted(data: ExtractedInvoiceData, src: 'file_upload') {
+    if (qrEttn && data.ettn && qrEttn !== data.ettn) {
+      setEttnMismatch(true)
+    }
+
     const invoiceData: Partial<Invoice> = {
       source: src,
+      qr_raw_data: qrData ?? undefined,
       invoice_number: data.invoice_number,
       invoice_date: data.invoice_date,
       due_date: data.due_date,
@@ -130,7 +144,20 @@ export default function NewInvoicePage() {
               <div className="text-sm text-gray-500 mt-0.5">Claude AI tüm fatura bilgilerini otomatik çıkarır</div>
             </div>
           </div>
-          <FileUpload onExtracted={handleExtracted} />
+          {qrData && (
+            <div className="mb-3 flex items-center gap-2 text-teal-400 text-sm font-medium">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              QR algılandı{qrEttn ? `: ETTN ${qrEttn}` : ''}
+            </div>
+          )}
+          {ettnMismatch && (
+            <div className="mb-3 bg-yellow-950/50 border border-yellow-700 rounded-lg px-3 py-2 text-yellow-400 text-sm">
+              AI ve QR&apos;dan gelen ETTN farklı, lütfen kontrol edin
+            </div>
+          )}
+          <FileUpload onExtracted={handleExtracted} onQrDetected={handleQrDetectedFromFile} />
         </div>
 
         {/* Manual */}

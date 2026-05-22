@@ -2,20 +2,32 @@
 
 import { useRef, useState } from 'react'
 import { ExtractedInvoiceData } from '@/lib/types'
+import { autoScanQr } from '@/lib/qr-from-image'
 
 interface Props {
   onExtracted: (data: ExtractedInvoiceData, source: 'file_upload') => void
+  onQrDetected?: (qrRawData: string) => void
 }
 
-export default function FileUpload({ onExtracted }: Props) {
+export default function FileUpload({ onExtracted, onQrDetected }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [dragOver, setDragOver] = useState(false)
+  const [qrFound, setQrFound] = useState(false)
 
   async function processFile(file: File) {
     setLoading(true)
     setError('')
+    setQrFound(false)
+
+    // QR tarama arka planda sessizce çalışır
+    autoScanQr(file).then(qrData => {
+      if (qrData) {
+        setQrFound(true)
+        onQrDetected?.(qrData)
+      }
+    }).catch(() => {})
 
     try {
       let base64: string
@@ -121,6 +133,15 @@ export default function FileUpload({ onExtracted }: Props) {
           </>
         )}
       </div>
+
+      {qrFound && (
+        <div className="flex items-center gap-2 text-teal-400 text-sm">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          QR algılandı
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-950/50 border border-red-800 rounded-lg px-3 py-2 text-red-400 text-sm">

@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser'
+import { DecodeHintType, BarcodeFormat } from '@zxing/library'
 
 interface Props {
   onScan: (data: string) => void
@@ -9,61 +11,54 @@ interface Props {
 
 export default function QrScanner({ onScan, onClose }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const streamRef = useRef<MediaStream | null>(null)
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const controlsRef = useRef<IScannerControls | null>(null)
+  const onScanRef = useRef(onScan)
   const [error, setError] = useState('')
   const [scanning, setScanning] = useState(true)
 
   useEffect(() => {
-    startCamera()
-    return () => stopCamera()
-  }, [])
+    onScanRef.current = onScan
+  }, [onScan])
 
-  async function startCamera() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+  useEffect(() => {
+    const hints = new Map()
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [BarcodeFormat.QR_CODE])
+    hints.set(DecodeHintType.TRY_HARDER, true)
+    const reader = new BrowserMultiFormatReader(hints)
+
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {
+          facingMode: 'environment',
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
       })
-      streamRef.current = stream
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.play()
-      }
-      startScanning()
-    } catch {
-      setError('Kamera erişimi reddedildi veya mevcut değil.')
+      .then(stream => {
+        if (videoRef.current) videoRef.current.srcObject = stream
+        return reader.decodeFromVideoDevice(
+          undefined,
+          videoRef.current!,
+          (result, _err, controls) => {
+            if (result) {
+              controls?.stop()
+              setScanning(false)
+              onScanRef.current(result.getText())
+            }
+          }
+        )
+      })
+      .then(controls => {
+        controlsRef.current = controls
+      })
+      .catch(() => {
+        setError('Kamera erişimi reddedildi veya mevcut değil.')
+      })
+
+    return () => {
+      controlsRef.current?.stop()
     }
-  }
-
-  function stopCamera() {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    streamRef.current?.getTracks().forEach(t => t.stop())
-  }
-
-  function startScanning() {
-    intervalRef.current = setInterval(async () => {
-      const video = videoRef.current
-      const canvas = canvasRef.current
-      if (!video || !canvas || video.readyState !== 4) return
-
-      canvas.width = video.videoWidth
-      canvas.height = video.videoHeight
-      const ctx = canvas.getContext('2d')!
-      ctx.drawImage(video, 0, 0)
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-
-      try {
-        const jsQR = (await import('jsqr')).default
-        const code = jsQR(imageData.data, imageData.width, imageData.height)
-        if (code?.data) {
-          setScanning(false)
-          stopCamera()
-          onScan(code.data)
-        }
-      } catch {}
-    }, 200)
-  }
+  }, [])
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
@@ -85,10 +80,8 @@ export default function QrScanner({ onScan, onClose }: Props) {
           ) : (
             <>
               <video ref={videoRef} className="w-full h-full object-cover" muted playsInline />
-              <canvas ref={canvasRef} className="hidden" />
-              {/* Scanning overlay */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative w-48 h-48">
+                <div className="relative w-72 h-72">
                   <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-teal-400 rounded-tl-lg" />
                   <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-teal-400 rounded-tr-lg" />
                   <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-teal-400 rounded-bl-lg" />
