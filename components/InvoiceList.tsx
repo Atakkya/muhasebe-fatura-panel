@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Invoice } from '@/lib/types'
+import { exportInvoicesToExcel } from '@/lib/excel-export'
 
 interface Props {
   invoices: Invoice[]
@@ -34,6 +35,8 @@ export default function InvoiceList({ invoices }: Props) {
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [exporting, setExporting] = useState(false)
 
   const filtered = invoices.filter(inv => {
     if (typeFilter && inv.invoice_type !== typeFilter) return false
@@ -48,6 +51,40 @@ export default function InvoiceList({ invoices }: Props) {
     }
     return true
   })
+
+  const allFilteredIds = filtered.map(inv => inv.id!).filter(Boolean)
+  const allSelected = allFilteredIds.length > 0 && allFilteredIds.every(id => selectedIds.includes(id))
+
+  function toggleSelectAll() {
+    if (allSelected) {
+      setSelectedIds(prev => prev.filter(id => !allFilteredIds.includes(id)))
+    } else {
+      setSelectedIds(prev => [...new Set([...prev, ...allFilteredIds])])
+    }
+  }
+
+  function toggleSelect(id: string) {
+    setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
+  }
+
+  async function handleExport() {
+    setExporting(true)
+    try {
+      const res = await fetch('/api/invoices/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedIds.length > 0 ? selectedIds : undefined }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Hata')
+      const today = new Date().toISOString().split('T')[0]
+      exportInvoicesToExcel(json.data, `faturalar_${today}.xlsx`)
+    } catch (err) {
+      alert('Excel oluşturulamadı: ' + (err instanceof Error ? err.message : 'Bilinmeyen hata'))
+    } finally {
+      setExporting(false)
+    }
+  }
 
   function exportCsv() {
     const rows = [
@@ -89,6 +126,22 @@ export default function InvoiceList({ invoices }: Props) {
           <option value="overdue">Gecikmiş</option>
         </select>
         <div className="flex-1" />
+        {selectedIds.length > 0 && (
+          <span className="text-xs text-gray-400">{selectedIds.length} fatura seçildi</span>
+        )}
+        <button
+          onClick={handleExport}
+          disabled={exporting}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-white text-sm font-medium transition-colors disabled:opacity-50"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          {exporting ? 'İndiriliyor...' : selectedIds.length > 0
+            ? `Seçilenleri Excel'e Aktar (${selectedIds.length})`
+            : "Tümünü Excel'e Aktar"}
+        </button>
         <button onClick={exportCsv}
           className="flex items-center gap-2 border border-[#333] text-gray-400 hover:text-white hover:border-[#555] px-3 py-2 rounded-lg text-sm transition-colors">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,6 +171,14 @@ export default function InvoiceList({ invoices }: Props) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1a1a1a]">
+                <th className="pl-4 py-2.5">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleSelectAll}
+                    className="rounded border-[#444] bg-[#1a1a1a] accent-teal-500"
+                  />
+                </th>
                 {['Fatura No', 'Tarih', 'Tür', 'Taraf', 'Tutar', 'Ödeme', 'Hesap Kodu', ''].map(h => (
                   <th key={h} className="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">{h}</th>
                 ))}
@@ -126,6 +187,14 @@ export default function InvoiceList({ invoices }: Props) {
             <tbody>
               {filtered.map(inv => (
                 <tr key={inv.id} className="border-b border-[#1a1a1a] hover:bg-[#1a1a1a] transition-colors">
+                  <td className="pl-4 py-2.5">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(inv.id!)}
+                      onChange={() => toggleSelect(inv.id!)}
+                      className="rounded border-[#444] bg-[#1a1a1a] accent-teal-500"
+                    />
+                  </td>
                   <td className="px-4 py-2.5">
                     <Link href={`/invoices/${inv.id}`} className="text-teal-400 hover:text-teal-300 font-mono text-xs">
                       {inv.invoice_number ?? '—'}
