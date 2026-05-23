@@ -37,6 +37,18 @@ export default function NewInvoicePage() {
     setQrData(raw)
     const parsed = parseQrCode(raw)
     setQrEttn(parsed.ettn ?? null)
+
+    if (parsed.ettn) {
+      setInitialData(prev => ({
+        ...prev,
+        ettn: parsed.ettn ?? undefined,
+        qr_raw_data: raw,
+      }))
+      setExtractedFields(prev => {
+        if (prev.includes('ettn')) return prev
+        return [...prev, 'ettn']
+      })
+    }
   }
 
   function handleExtracted(data: ExtractedInvoiceData, src: 'file_upload') {
@@ -50,7 +62,7 @@ export default function NewInvoicePage() {
       invoice_number: data.invoice_number,
       invoice_date: data.invoice_date,
       due_date: data.due_date,
-      ettn: data.ettn,
+      ettn: data.ettn ?? qrEttn,
       seller_name: data.seller_name,
       seller_tax_id: data.seller_tax_id,
       seller_tax_office: data.seller_tax_office,
@@ -102,6 +114,29 @@ export default function NewInvoicePage() {
             </p>
           </div>
         </div>
+
+        {qrEttn && (
+          <div className="mb-4 p-3 bg-green-900/30 border border-green-700 rounded-lg flex items-center gap-2">
+            <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span className="text-green-300 text-sm">
+              QR algılandı: ETTN <code className="font-mono">{qrEttn}</code>
+            </span>
+          </div>
+        )}
+
+        {ettnMismatch && (
+          <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-700 rounded-lg flex items-center gap-2">
+            <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span className="text-yellow-300 text-sm">
+              AI ve QR&apos;dan gelen ETTN farklı! Lütfen kontrol edin.
+            </span>
+          </div>
+        )}
+
         <InvoiceForm initialData={initialData} extractedFields={extractedFields} />
       </div>
     )

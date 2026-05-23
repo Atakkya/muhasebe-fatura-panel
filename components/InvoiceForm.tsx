@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Invoice, InvoiceItem, AUTO_EXTRACTED_FIELDS, MANUAL_REQUIRED_FIELDS } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 
@@ -43,6 +43,15 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
   )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (initialData) {
+      setInvoice(prev => ({ ...prev, ...initialData }))
+      if (initialData.items && initialData.items.length > 0) {
+        setItems(initialData.items as InvoiceItem[])
+      }
+    }
+  }, [initialData])
 
   const isExtracted = (field: keyof Invoice) =>
     extractedFields.includes(field) || (AUTO_EXTRACTED_FIELDS.includes(field) && initialData?.[field] != null)
