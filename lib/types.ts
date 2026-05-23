@@ -1,3 +1,28 @@
+export type PartyType = 'corporate' | 'individual'
+
+export interface Party {
+  id: string
+  user_id: string
+  party_type: PartyType
+  tax_id: string
+  name: string
+  tax_office: string | null
+  address: string | null
+  phone: string | null
+  email: string | null
+  iban: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PartyWithBalance extends Party {
+  invoice_count: number
+  total_purchase: number
+  total_sale: number
+  balance: number
+}
+
 export interface InvoiceItem {
   id?: string
   invoice_id?: string
@@ -49,6 +74,9 @@ export interface Invoice {
   vat_deductible: boolean
   notes: string | null
   category: string | null
+
+  seller_party_id: string | null
+  buyer_party_id: string | null
 
   status: 'draft' | 'confirmed'
   created_at?: string
