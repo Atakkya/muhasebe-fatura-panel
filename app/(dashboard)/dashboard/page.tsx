@@ -31,9 +31,9 @@ export default async function DashboardPage() {
   const totalPending = pending.reduce((s, i) => s + (i.total_amount ?? 0), 0)
 
   const statusColors: Record<string, string> = {
-    pending: 'text-amber-400 bg-amber-950/40',
-    paid: 'text-green-400 bg-green-950/40',
-    overdue: 'text-red-400 bg-red-950/40',
+    pending: 'text-amber-600 bg-amber-50',
+    paid: 'text-green-600 bg-green-50',
+    overdue: 'text-red-500 bg-red-50',
   }
   const statusLabels: Record<string, string> = {
     pending: 'Bekliyor', paid: 'Ödendi', overdue: 'Gecikmiş',
@@ -43,12 +43,12 @@ export default async function DashboardPage() {
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-white">Genel Bakış</h1>
+          <h1 className="text-xl font-bold text-gray-900">Genel Bakış</h1>
           <p className="text-gray-500 text-sm mt-0.5">Muhasebe durumunuz</p>
         </div>
         <Link
           href="/invoices/new"
-          className="flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="flex items-center gap-2 bg-[#2456DB] hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -59,41 +59,41 @@ export default async function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="bg-[#141414] border border-[#222] rounded-xl p-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-xs text-gray-500 mb-1">Toplam Alış</div>
-          <div className="text-xl font-bold text-white">{fmtMoney(totalPurchase)}</div>
-          <div className="text-xs text-gray-600 mt-1">{purchases.length} fatura</div>
+          <div className="text-xl font-bold text-gray-900">{fmtMoney(totalPurchase)}</div>
+          <div className="text-xs text-gray-400 mt-1">{purchases.length} fatura</div>
         </div>
-        <div className="bg-[#141414] border border-[#222] rounded-xl p-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-xs text-gray-500 mb-1">Toplam Satış</div>
-          <div className="text-xl font-bold text-teal-400">{fmtMoney(totalSales)}</div>
-          <div className="text-xs text-gray-600 mt-1">{sales.length} fatura</div>
+          <div className="text-xl font-bold" style={{ color: '#1ABC9C' }}>{fmtMoney(totalSales)}</div>
+          <div className="text-xs text-gray-400 mt-1">{sales.length} fatura</div>
         </div>
-        <div className="bg-[#141414] border border-[#222] rounded-xl p-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-xs text-gray-500 mb-1">Bekleyen Ödeme</div>
-          <div className="text-xl font-bold text-amber-400">{fmtMoney(totalPending)}</div>
-          <div className="text-xs text-gray-600 mt-1">{pending.length} fatura</div>
+          <div className="text-xl font-bold text-amber-600">{fmtMoney(totalPending)}</div>
+          <div className="text-xs text-gray-400 mt-1">{pending.length} fatura</div>
         </div>
       </div>
 
       {/* Recent invoices */}
-      <div className="bg-[#141414] border border-[#222] rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[#222]">
-          <span className="text-sm font-medium text-white">Son Faturalar</span>
-          <Link href="/invoices" className="text-xs text-teal-400 hover:text-teal-300">Tümünü gör</Link>
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+          <span className="text-sm font-medium text-gray-900">Son Faturalar</span>
+          <Link href="/invoices" className="text-xs text-[#2456DB] hover:text-blue-700">Tümünü gör</Link>
         </div>
 
         {!invoices?.length ? (
-          <div className="py-12 text-center text-gray-600">
+          <div className="py-12 text-center text-gray-400">
             <p className="mb-3">Henüz fatura yok</p>
-            <Link href="/invoices/new" className="text-teal-400 hover:text-teal-300 text-sm">
+            <Link href="/invoices/new" className="text-[#2456DB] hover:text-blue-700 text-sm">
               İlk faturanı ekle →
             </Link>
           </div>
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#1a1a1a]">
+              <tr className="border-b border-gray-100">
                 {['Fatura No', 'Taraf', 'Tür', 'Tutar', 'Durum'].map(h => (
                   <th key={h} className="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">{h}</th>
                 ))}
@@ -101,21 +101,21 @@ export default async function DashboardPage() {
             </thead>
             <tbody>
               {invoices.map(inv => (
-                <tr key={inv.id} className="border-b border-[#1a1a1a] hover:bg-[#1a1a1a] transition-colors">
+                <tr key={inv.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-2.5">
-                    <Link href={`/invoices/${inv.id}`} className="text-teal-400 hover:text-teal-300 font-mono text-xs">
+                    <Link href={`/invoices/${inv.id}`} className="text-[#2456DB] hover:text-blue-700 font-mono text-xs">
                       {inv.invoice_number ?? '—'}
                     </Link>
                   </td>
-                  <td className="px-4 py-2.5 text-gray-300">
+                  <td className="px-4 py-2.5 text-gray-700">
                     {inv.invoice_type === 'purchase' ? inv.seller_name : inv.buyer_name ?? '—'}
                   </td>
                   <td className="px-4 py-2.5">
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${inv.invoice_type === 'purchase' ? 'text-blue-400 bg-blue-950/40' : 'text-purple-400 bg-purple-950/40'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${inv.invoice_type === 'purchase' ? 'text-[#2456DB] bg-blue-50' : 'text-purple-600 bg-purple-50'}`}>
                       {inv.invoice_type === 'purchase' ? 'Alış' : 'Satış'}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 text-white font-medium">{fmtMoney(inv.total_amount)}</td>
+                  <td className="px-4 py-2.5 text-gray-900 font-medium">{fmtMoney(inv.total_amount)}</td>
                   <td className="px-4 py-2.5">
                     <span className={`text-xs px-2 py-0.5 rounded-full ${statusColors[inv.payment_status] ?? ''}`}>
                       {statusLabels[inv.payment_status] ?? inv.payment_status}

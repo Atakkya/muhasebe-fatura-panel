@@ -120,3 +120,21 @@ export const AUTO_EXTRACTED_FIELDS: (keyof Invoice)[] = [
 export const MANUAL_REQUIRED_FIELDS: (keyof Invoice)[] = [
   'invoice_type', 'accounting_code', 'vat_deductible',
 ]
+
+export type BulkUploadStatus =
+  | 'queued'
+  | 'uploading'
+  | 'processing'
+  | 'done'
+  | 'error'
+
+export interface BulkUploadItem {
+  id: string
+  file: File
+  status: BulkUploadStatus
+  progress: number
+  error?: string
+  invoiceId?: string
+  extractedData?: Partial<Invoice>
+  qrData?: string
+}

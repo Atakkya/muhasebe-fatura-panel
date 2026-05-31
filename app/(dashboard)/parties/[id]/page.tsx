@@ -25,7 +25,7 @@ function Field({ label, value }: { label: string; value: string | null | undefin
   return (
     <div>
       <div className="text-xs text-gray-500">{label}</div>
-      <div className="text-sm text-gray-200 mt-0.5">{value}</div>
+      <div className="text-sm text-gray-700 mt-0.5">{value}</div>
     </div>
   )
 }
@@ -49,7 +49,7 @@ export default function PartyDetailPage() {
   }, [id])
 
   if (loading) return <div className="p-8 text-gray-500 text-sm">Yükleniyor...</div>
-  if (!party) return <div className="p-8 text-red-400 text-sm">Cari bulunamadı.</div>
+  if (!party) return <div className="p-8 text-red-500 text-sm">Cari bulunamadı.</div>
 
   const totalPurchase = invoices
     .filter((i) => i.seller_party_id === id)
@@ -62,24 +62,24 @@ export default function PartyDetailPage() {
   return (
     <div className="p-8 max-w-4xl">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/parties" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
+        <Link href="/parties" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
           ← Cariler
         </Link>
         <button
           disabled
-          className="text-xs px-3 py-1.5 rounded-lg border border-[#2a2a2a] text-gray-600 cursor-not-allowed"
+          className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-400 cursor-not-allowed"
         >
           Düzenle
         </button>
       </div>
 
       {/* Cari bilgileri kartı */}
-      <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl p-6 mb-4">
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-4">
         <div className="flex items-start gap-4 mb-5">
           <div>
-            <h1 className="text-xl font-bold text-white">{party.name}</h1>
+            <h1 className="text-xl font-bold text-gray-900">{party.name}</h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium ${party.party_type === 'corporate' ? 'bg-blue-950 text-blue-300' : 'bg-purple-950 text-purple-300'}`}>
+              <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium ${party.party_type === 'corporate' ? 'bg-blue-50 text-[#2456DB]' : 'bg-purple-50 text-purple-600'}`}>
                 {party.party_type === 'corporate' ? 'Firma' : 'Şahıs'}
               </span>
               <span className="text-gray-500 font-mono text-xs">{party.tax_id}</span>
@@ -99,33 +99,36 @@ export default function PartyDetailPage() {
 
       {/* Bakiye kartı */}
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl p-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-xs text-gray-500 mb-1">Borç (Alış)</div>
-          <div className="text-xl font-bold text-red-400">{fmt(totalPurchase)} ₺</div>
+          <div className="text-xl font-bold text-red-500">{fmt(totalPurchase)} ₺</div>
         </div>
-        <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl p-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-xs text-gray-500 mb-1">Alacak (Satış)</div>
-          <div className="text-xl font-bold text-teal-400">{fmt(totalSale)} ₺</div>
+          <div className="text-xl font-bold" style={{ color: '#1ABC9C' }}>{fmt(totalSale)} ₺</div>
         </div>
-        <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl p-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-4">
           <div className="text-xs text-gray-500 mb-1">Net Bakiye</div>
-          <div className={`text-xl font-bold ${balance >= 0 ? 'text-teal-400' : 'text-red-400'}`}>
+          <div
+            className="text-xl font-bold"
+            style={{ color: balance >= 0 ? '#1ABC9C' : '#ef4444' }}
+          >
             {balance >= 0 ? '+' : ''}{fmt(balance)} ₺
           </div>
         </div>
       </div>
 
       {/* Fatura listesi */}
-      <div className="bg-[#0f0f0f] border border-[#1a1a1a] rounded-xl overflow-hidden">
-        <div className="px-5 py-3 border-b border-[#1a1a1a]">
-          <h2 className="text-sm font-semibold text-gray-300">Faturalar ({invoices.length})</h2>
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="px-5 py-3 border-b border-gray-200">
+          <h2 className="text-sm font-semibold text-gray-700">Faturalar ({invoices.length})</h2>
         </div>
         {invoices.length === 0 ? (
-          <div className="px-5 py-8 text-center text-sm text-gray-600">Bu cariye ait fatura yok.</div>
+          <div className="px-5 py-8 text-center text-sm text-gray-400">Bu cariye ait fatura yok.</div>
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#1a1a1a]">
+              <tr className="border-b border-gray-200">
                 <th className="px-4 py-3 text-left text-gray-500 font-medium">Fatura No</th>
                 <th className="px-4 py-3 text-left text-gray-500 font-medium">Tarih</th>
                 <th className="px-4 py-3 text-left text-gray-500 font-medium">Tip</th>
@@ -138,22 +141,22 @@ export default function PartyDetailPage() {
               {invoices.map((inv) => {
                 const isSale = inv.buyer_party_id === id
                 return (
-                  <tr key={inv.id} className="border-b border-[#1a1a1a] hover:bg-[#141414] transition-colors">
-                    <td className="px-4 py-3 text-white font-mono text-xs">{inv.invoice_number ?? '—'}</td>
-                    <td className="px-4 py-3 text-gray-400">{inv.invoice_date ?? '—'}</td>
+                  <tr key={inv.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-gray-900 font-mono text-xs">{inv.invoice_number ?? '—'}</td>
+                    <td className="px-4 py-3 text-gray-500">{inv.invoice_date ?? '—'}</td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${isSale ? 'bg-teal-950 text-teal-300' : 'bg-orange-950 text-orange-300'}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${isSale ? 'bg-teal-50 text-teal-700' : 'bg-orange-50 text-orange-700'}`}>
                         {isSale ? 'Satış' : 'Alış'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right text-gray-200">{fmt(inv.total_amount ?? 0)} ₺</td>
+                    <td className="px-4 py-3 text-right text-gray-700">{fmt(inv.total_amount ?? 0)} ₺</td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${inv.status === 'confirmed' ? 'bg-teal-950 text-teal-300' : 'bg-yellow-950 text-yellow-300'}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${inv.status === 'confirmed' ? 'bg-teal-50 text-teal-700' : 'bg-yellow-50 text-yellow-700'}`}>
                         {inv.status === 'confirmed' ? 'Onaylı' : 'Taslak'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      <Link href={`/invoices/${inv.id}`} className="text-xs text-teal-400 hover:text-teal-300 transition-colors">
+                      <Link href={`/invoices/${inv.id}`} className="text-xs text-[#2456DB] hover:text-blue-700 transition-colors">
                         Detay →
                       </Link>
                     </td>

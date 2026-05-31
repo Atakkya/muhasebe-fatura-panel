@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useTransition } from 'react'
 import { Invoice, InvoiceItem, AUTO_EXTRACTED_FIELDS, MANUAL_REQUIRED_FIELDS } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 
@@ -43,13 +43,16 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
   )
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [, startTransition] = useTransition()
 
   useEffect(() => {
     if (initialData) {
-      setInvoice(prev => ({ ...prev, ...initialData }))
-      if (initialData.items && initialData.items.length > 0) {
-        setItems(initialData.items as InvoiceItem[])
-      }
+      startTransition(() => {
+        setInvoice(prev => ({ ...prev, ...initialData }))
+        if (initialData.items && initialData.items.length > 0) {
+          setItems(initialData.items as InvoiceItem[])
+        }
+      })
     }
   }, [initialData])
 
@@ -60,17 +63,17 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
 
   function fieldClass(field: keyof Invoice) {
     if (isManualRequired(field) && !invoice[field]) {
-      return 'border-orange-500 bg-orange-950/10 focus:border-orange-400'
+      return 'border border-orange-400 bg-orange-50 focus:border-orange-400'
     }
     if (isExtracted(field)) {
-      return 'border-green-800 bg-green-950/10 focus:border-green-500'
+      return 'border border-green-400 bg-green-50 focus:border-green-500'
     }
-    return 'border-[#333] bg-[#1a1a1a] focus:border-teal-500'
+    return 'border border-gray-300 bg-white focus:border-[#2456DB]'
   }
 
   function labelExtra(field: keyof Invoice) {
     if (isManualRequired(field) && !invoice[field]) {
-      return <span className="text-orange-400 text-xs ml-1">* Manuel gerekli</span>
+      return <span className="text-orange-500 text-xs ml-1">* Manuel gerekli</span>
     }
     if (isExtracted(field)) {
       return <span className="text-green-600 text-xs ml-1">✓ Otomatik</span>
@@ -128,18 +131,18 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
     router.refresh()
   }
 
-  const inputBase = 'w-full rounded-lg px-3 py-2 text-white text-sm placeholder-gray-600 focus:outline-none transition-colors'
+  const inputBase = 'w-full rounded-lg px-3 py-2 text-gray-900 text-sm placeholder-gray-400 focus:outline-none transition-colors'
 
   return (
     <div className="space-y-5">
       {/* Legend */}
       <div className="flex items-center gap-4 text-xs text-gray-500">
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded border border-green-700 bg-green-950/30 inline-block" />
+          <span className="w-3 h-3 rounded border border-green-400 bg-green-100 inline-block" />
           Otomatik çekildi
         </span>
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded border border-orange-500 bg-orange-950/20 inline-block" />
+          <span className="w-3 h-3 rounded border border-orange-400 bg-orange-100 inline-block" />
           Manuel girilmesi zorunlu
         </span>
       </div>
@@ -229,25 +232,25 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
           {items.map((item, idx) => (
             <div key={idx} className="grid grid-cols-12 gap-1 items-center">
               <input
-                className={`${inputBase} border border-[#333] bg-[#1a1a1a] col-span-4`}
+                className={`${inputBase} border border-gray-300 bg-white col-span-4`}
                 value={item.description} onChange={e => updateItem(idx, 'description', e.target.value)}
                 placeholder="Açıklama"
               />
               <input type="number" min={0} step="0.01"
-                className={`${inputBase} border border-[#333] bg-[#1a1a1a] col-span-2`}
+                className={`${inputBase} border border-gray-300 bg-white col-span-2`}
                 value={item.quantity} onChange={e => updateItem(idx, 'quantity', parseFloat(e.target.value) || 0)} />
               <input type="number" min={0} step="0.01"
-                className={`${inputBase} border border-[#333] bg-[#1a1a1a] col-span-2`}
+                className={`${inputBase} border border-gray-300 bg-white col-span-2`}
                 value={item.unit_price} onChange={e => updateItem(idx, 'unit_price', parseFloat(e.target.value) || 0)} />
               <select
-                className={`${inputBase} border border-[#333] bg-[#1a1a1a] col-span-2`}
+                className={`${inputBase} border border-gray-300 bg-white col-span-2`}
                 value={item.vat_rate} onChange={e => updateItem(idx, 'vat_rate', parseInt(e.target.value))}>
                 {[0, 1, 8, 10, 20].map(r => <option key={r} value={r}>%{r}</option>)}
               </select>
-              <span className="col-span-1 text-right text-sm text-white font-medium">
+              <span className="col-span-1 text-right text-sm text-gray-900 font-medium">
                 {fmtMoney(item.total_price)}
               </span>
-              <button onClick={() => removeItem(idx)} className="col-span-1 flex justify-center text-gray-600 hover:text-red-400">
+              <button onClick={() => removeItem(idx)} className="col-span-1 flex justify-center text-gray-400 hover:text-red-500">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -255,21 +258,21 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
             </div>
           ))}
 
-          <button onClick={addItem} className="text-sm text-teal-400 hover:text-teal-300 flex items-center gap-1 mt-2">
+          <button onClick={addItem} className="text-sm text-[#2456DB] hover:text-blue-700 flex items-center gap-1 mt-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
             Kalem Ekle
           </button>
 
-          <div className="border-t border-[#222] pt-3 mt-3 space-y-1 text-sm text-right">
-            <div className="flex justify-between text-gray-400">
+          <div className="border-t border-gray-200 pt-3 mt-3 space-y-1 text-sm text-right">
+            <div className="flex justify-between text-gray-500">
               <span>Ara Toplam</span><span>{fmtMoney(subtotal)} ₺</span>
             </div>
-            <div className="flex justify-between text-gray-400">
+            <div className="flex justify-between text-gray-500">
               <span>KDV</span><span>{fmtMoney(vatTotal)} ₺</span>
             </div>
-            <div className="flex justify-between text-white font-bold text-base border-t border-[#333] pt-2">
+            <div className="flex justify-between text-gray-900 font-bold text-base border-t border-gray-300 pt-2">
               <span>Genel Toplam</span><span>{fmtMoney(grandTotal)} ₺</span>
             </div>
           </div>
@@ -297,19 +300,19 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="radio" checked={invoice.vat_deductible === true}
                   onChange={() => set('vat_deductible', true)}
-                  className="accent-teal-500" />
-                <span className="text-sm text-gray-300">Evet</span>
+                  className="accent-[#2456DB]" />
+                <span className="text-sm text-gray-700">Evet</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="radio" checked={invoice.vat_deductible === false}
                   onChange={() => set('vat_deductible', false)}
-                  className="accent-teal-500" />
-                <span className="text-sm text-gray-300">Hayır</span>
+                  className="accent-[#2456DB]" />
+                <span className="text-sm text-gray-700">Hayır</span>
               </label>
             </div>
           </Field>
           <Field label="Ödeme Durumu">
-            <select className={`${inputBase} border border-[#333] bg-[#1a1a1a] focus:border-teal-500`}
+            <select className={`${inputBase} border border-gray-300 bg-white focus:border-[#2456DB]`}
               value={invoice.payment_status ?? 'pending'} onChange={e => set('payment_status', e.target.value)}>
               <option value="pending">Bekliyor</option>
               <option value="paid">Ödendi</option>
@@ -317,39 +320,39 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
             </select>
           </Field>
           <Field label="Maliyet Merkezi">
-            <input className={`${inputBase} border border-[#333] bg-[#1a1a1a] focus:border-teal-500`}
+            <input className={`${inputBase} border border-gray-300 bg-white focus:border-[#2456DB]`}
               value={invoice.cost_center ?? ''} onChange={e => set('cost_center', e.target.value || null)}
               placeholder="Opsiyonel" />
           </Field>
           <Field label="Proje Kodu">
-            <input className={`${inputBase} border border-[#333] bg-[#1a1a1a] focus:border-teal-500`}
+            <input className={`${inputBase} border border-gray-300 bg-white focus:border-[#2456DB]`}
               value={invoice.project_code ?? ''} onChange={e => set('project_code', e.target.value || null)}
               placeholder="Opsiyonel" />
           </Field>
           <Field label="Notlar" className="col-span-2">
-            <textarea className={`${inputBase} border border-[#333] bg-[#1a1a1a] focus:border-teal-500 resize-none`}
+            <textarea className={`${inputBase} border border-gray-300 bg-white focus:border-[#2456DB] resize-none`}
               rows={2} value={invoice.notes ?? ''} onChange={e => set('notes', e.target.value || null)} />
           </Field>
         </div>
       </Section>
 
       {error && (
-        <div className="bg-red-950/50 border border-red-800 rounded-lg px-3 py-2 text-red-400 text-sm">
+        <div className="bg-red-50 border border-red-300 rounded-lg px-3 py-2 text-red-600 text-sm">
           {error}
         </div>
       )}
 
       <div className="flex gap-3 justify-end pt-2">
         <button onClick={() => router.back()}
-          className="px-4 py-2 rounded-lg border border-[#333] text-gray-400 hover:text-white text-sm transition-colors">
+          className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:text-gray-900 text-sm transition-colors">
           İptal
         </button>
         <button onClick={() => handleSave()} disabled={saving}
-          className="px-4 py-2 rounded-lg border border-[#333] text-gray-300 hover:bg-[#222] text-sm transition-colors disabled:opacity-50">
+          className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 text-sm transition-colors disabled:opacity-50">
           {saving ? 'Kaydediliyor...' : 'Taslak Kaydet'}
         </button>
         <button onClick={() => handleSave('confirmed')} disabled={saving}
-          className="px-5 py-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-white text-sm font-medium transition-colors disabled:opacity-50">
+          className="px-5 py-2 rounded-lg bg-[#2456DB] hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-50">
           {saving ? 'Kaydediliyor...' : 'Onayla & Kaydet'}
         </button>
       </div>
@@ -359,8 +362,8 @@ export default function InvoiceForm({ initialData, extractedFields = [], invoice
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-[#141414] border border-[#222] rounded-xl p-4">
-      <h3 className="text-sm font-medium text-gray-300 mb-3">{title}</h3>
+    <div className="bg-white border border-gray-200 rounded-xl p-4">
+      <h3 className="text-sm font-medium text-gray-700 mb-3">{title}</h3>
       {children}
     </div>
   )

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -36,60 +37,55 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <span className="text-xl font-bold text-white">FaturaPanel</span>
+          <div className="flex justify-center mb-4">
+            <Logo size="md" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Hesap Oluştur</h1>
-          <p className="text-gray-400 mt-1">Ücretsiz başlayın</p>
+          <h1 className="text-2xl font-bold text-gray-900">Hesap Oluştur</h1>
+          <p className="text-gray-500 mt-1">Ücretsiz başlayın</p>
         </div>
 
-        <div className="bg-[#141414] border border-[#222] rounded-xl p-6">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Ad Soyad</label>
+              <label className="block text-sm text-gray-600 mb-1">Ad Soyad</label>
               <input
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
-                className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-3 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-teal-500 transition-colors"
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#2456DB] transition-colors text-sm"
                 placeholder="Ahmet Yılmaz"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">E-posta</label>
+              <label className="block text-sm text-gray-600 mb-1">E-posta</label>
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 required
-                className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-3 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-teal-500 transition-colors"
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#2456DB] transition-colors text-sm"
                 placeholder="ad@sirket.com"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Şifre</label>
+              <label className="block text-sm text-gray-600 mb-1">Şifre</label>
               <input
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-3 py-2.5 text-white placeholder-gray-600 focus:outline-none focus:border-teal-500 transition-colors"
+                className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#2456DB] transition-colors text-sm"
                 placeholder="En az 6 karakter"
               />
             </div>
 
             {error && (
-              <div className="bg-red-950/50 border border-red-800 rounded-lg px-3 py-2 text-red-400 text-sm">
+              <div className="bg-red-50 border border-red-300 rounded-lg px-3 py-2 text-red-600 text-sm">
                 {error}
               </div>
             )}
@@ -97,7 +93,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-teal-500 hover:bg-teal-400 disabled:opacity-50 text-white font-medium rounded-lg py-2.5 transition-colors"
+              className="w-full bg-[#2456DB] hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-lg py-2.5 transition-colors text-sm"
             >
               {loading ? 'Oluşturuluyor...' : 'Hesap Oluştur'}
             </button>
@@ -105,7 +101,7 @@ export default function RegisterPage() {
 
           <p className="text-center text-gray-500 text-sm mt-4">
             Hesabınız var mı?{' '}
-            <Link href="/login" className="text-teal-400 hover:text-teal-300">
+            <Link href="/login" className="text-[#2456DB] hover:text-blue-700">
               Giriş Yap
             </Link>
           </p>

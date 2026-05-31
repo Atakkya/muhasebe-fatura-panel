@@ -85,7 +85,6 @@ export default function NewInvoicePage() {
       })),
     }
 
-    // Track which fields were auto-extracted (non-null)
     const extracted = (Object.keys(invoiceData) as (keyof Invoice)[]).filter(
       k => k !== 'source' && k !== 'items' && invoiceData[k] != null
     )
@@ -100,13 +99,13 @@ export default function NewInvoicePage() {
     return (
       <div className="p-6 max-w-3xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
-          <button onClick={() => setStep('choose')} className="text-gray-500 hover:text-white">
+          <button onClick={() => setStep('choose')} className="text-gray-400 hover:text-gray-700">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <div>
-            <h1 className="text-xl font-bold text-white">Yeni Fatura</h1>
+            <h1 className="text-xl font-bold text-gray-900">Yeni Fatura</h1>
             <p className="text-gray-500 text-sm">
               {source === 'file_upload' && 'Claude AI ile otomatik dolduruldu'}
               {source === 'qr_scan' && 'QR koddan alındı'}
@@ -116,22 +115,22 @@ export default function NewInvoicePage() {
         </div>
 
         {qrEttn && (
-          <div className="mb-4 p-3 bg-green-900/30 border border-green-700 rounded-lg flex items-center gap-2">
-            <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-4 p-3 bg-green-50 border border-green-300 rounded-lg flex items-center gap-2">
+            <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-green-300 text-sm">
-              QR algılandı: ETTN <code className="font-mono">{qrEttn}</code>
+            <span className="text-green-700 text-sm">
+              QR algılandı: ETTN <code className="font-mono text-green-800">{qrEttn}</code>
             </span>
           </div>
         )}
 
         {ettnMismatch && (
-          <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-700 rounded-lg flex items-center gap-2">
-            <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-300 rounded-lg flex items-center gap-2">
+            <svg className="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
-            <span className="text-yellow-300 text-sm">
+            <span className="text-yellow-700 text-sm">
               AI ve QR&apos;dan gelen ETTN farklı! Lütfen kontrol edin.
             </span>
           </div>
@@ -145,7 +144,7 @@ export default function NewInvoicePage() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-white">Yeni Fatura Ekle</h1>
+        <h1 className="text-xl font-bold text-gray-900">Yeni Fatura Ekle</h1>
         <p className="text-gray-500 text-sm mt-0.5">Faturayı nasıl eklemek istersiniz?</p>
       </div>
 
@@ -153,34 +152,34 @@ export default function NewInvoicePage() {
         {/* QR Scan */}
         <button
           onClick={() => setShowQr(true)}
-          className="flex items-start gap-4 p-5 bg-[#141414] border border-[#222] hover:border-teal-800 rounded-xl text-left transition-colors group"
+          className="flex items-start gap-4 p-5 bg-white border border-gray-200 hover:border-[#2456DB] rounded-xl text-left transition-colors group"
         >
-          <div className="w-10 h-10 rounded-lg bg-teal-950 border border-teal-900 flex items-center justify-center flex-shrink-0 group-hover:border-teal-700">
-            <svg className="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center flex-shrink-0 group-hover:border-[#2456DB]">
+            <svg className="w-5 h-5 text-[#2456DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
             </svg>
           </div>
           <div>
-            <div className="font-medium text-white">QR Kod Tara</div>
+            <div className="font-medium text-gray-900">QR Kod Tara</div>
             <div className="text-sm text-gray-500 mt-0.5">Kamera ile faturadaki QR kodu okut — ETTN/UUID otomatik alınır</div>
           </div>
         </button>
 
         {/* File Upload */}
-        <div className="p-5 bg-[#141414] border border-[#222] rounded-xl">
+        <div className="p-5 bg-white border border-gray-200 rounded-xl">
           <div className="flex items-start gap-4 mb-4">
-            <div className="w-10 h-10 rounded-lg bg-purple-950 border border-purple-900 flex items-center justify-center flex-shrink-0">
-              <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-10 h-10 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
             <div>
-              <div className="font-medium text-white">PDF / Görsel Yükle</div>
+              <div className="font-medium text-gray-900">PDF / Görsel Yükle</div>
               <div className="text-sm text-gray-500 mt-0.5">Claude AI tüm fatura bilgilerini otomatik çıkarır</div>
             </div>
           </div>
           {qrData && (
-            <div className="mb-3 flex items-center gap-2 text-teal-400 text-sm font-medium">
+            <div className="mb-3 flex items-center gap-2 text-sm font-medium" style={{ color: '#1ABC9C' }}>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
@@ -188,7 +187,7 @@ export default function NewInvoicePage() {
             </div>
           )}
           {ettnMismatch && (
-            <div className="mb-3 bg-yellow-950/50 border border-yellow-700 rounded-lg px-3 py-2 text-yellow-400 text-sm">
+            <div className="mb-3 bg-yellow-50 border border-yellow-300 rounded-lg px-3 py-2 text-yellow-700 text-sm">
               AI ve QR&apos;dan gelen ETTN farklı, lütfen kontrol edin
             </div>
           )}
@@ -198,15 +197,15 @@ export default function NewInvoicePage() {
         {/* Manual */}
         <button
           onClick={() => setStep('form')}
-          className="flex items-start gap-4 p-5 bg-[#141414] border border-[#222] hover:border-[#444] rounded-xl text-left transition-colors"
+          className="flex items-start gap-4 p-5 bg-white border border-gray-200 hover:border-gray-400 rounded-xl text-left transition-colors"
         >
-          <div className="w-10 h-10 rounded-lg bg-[#1a1a1a] border border-[#333] flex items-center justify-center flex-shrink-0">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-300 flex items-center justify-center flex-shrink-0">
+            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
           </div>
           <div>
-            <div className="font-medium text-white">Manuel Giriş</div>
+            <div className="font-medium text-gray-900">Manuel Giriş</div>
             <div className="text-sm text-gray-500 mt-0.5">Tüm alanları kendiniz doldurun</div>
           </div>
         </button>

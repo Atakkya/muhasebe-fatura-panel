@@ -14,7 +14,7 @@ export default async function InvoicesPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-white">Faturalar</h1>
+        <h1 className="text-xl font-bold text-gray-900">Faturalar</h1>
         <p className="text-gray-500 text-sm mt-0.5">Tüm alış ve satış faturalarınız</p>
       </div>
       <InvoiceList invoices={invoices ?? []} />
