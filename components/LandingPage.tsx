@@ -1,6 +1,9 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useState } from 'react'
+
+const FatuDemo = dynamic(() => import('@/components/FatuDemo'), { ssr: false })
 import { motion, AnimatePresence } from 'framer-motion'
 import Logo from './Logo'
 
@@ -375,20 +378,8 @@ function DemoSection() {
           whileInView="visible"
           viewport={{ once: true }}
           variants={fadeUp}
-          className="rounded-3xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 aspect-video flex flex-col items-center justify-center gap-4"
         >
-          <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg"
-            style={{ background: GRADIENT }}
-          >
-            &#9654;
-          </div>
-          <p
-            className="text-gray-400 font-semibold text-sm"
-            style={{ fontFamily: 'var(--font-open-sans)' }}
-          >
-            Demo video yakında yayınlanacak
-          </p>
+          <FatuDemo />
         </motion.div>
       </div>
     </section>
