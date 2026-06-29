@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import type { PartyWithBalance } from '@/lib/types'
+import PartyRowMenu from '@/components/PartyRowMenu'
 
 function fmtMoney(n: number): string {
   return new Intl.NumberFormat('tr-TR', {
@@ -131,7 +132,7 @@ export default function PartiesPage() {
                 <th className="px-4 py-3 text-right text-gray-500 font-medium">Borç</th>
                 <th className="px-4 py-3 text-right text-gray-500 font-medium">Alacak</th>
                 <th className="px-4 py-3 text-right text-gray-500 font-medium">Bakiye</th>
-                <th className="px-4 py-3" />
+                <th className="px-4 py-3 text-right text-gray-500 font-medium">İşlemler</th>
               </tr>
             </thead>
             <tbody>
@@ -153,12 +154,19 @@ export default function PartiesPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/parties/${p.id}`}
-                      className="text-xs text-[#2456DB] hover:text-blue-700 transition-colors"
-                    >
-                      Detay →
-                    </Link>
+                    <div className="flex items-center justify-end gap-2">
+                      <Link
+                        href={`/parties/${p.id}`}
+                        className="text-xs text-[#2456DB] hover:text-blue-700 transition-colors"
+                      >
+                        Detay →
+                      </Link>
+                      <PartyRowMenu
+                        partyId={p.id}
+                        partyName={p.name}
+                        onDeleted={() => setParties(prev => prev.filter(x => x.id !== p.id))}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}
