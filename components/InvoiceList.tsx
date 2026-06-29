@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Invoice } from '@/lib/types'
 import { exportInvoicesToExcel } from '@/lib/excel-export'
 import BulkUploadModal from './BulkUploadModal'
+import InvoiceRowMenu from './InvoiceRowMenu'
 
 interface Props {
   invoices: Invoice[]
@@ -201,7 +202,7 @@ export default function InvoiceList({ invoices }: Props) {
                     className="rounded border-gray-300 bg-white accent-[#2456DB]"
                   />
                 </th>
-                {['Fatura No', 'Tarih', 'Tür', 'Taraf', 'Tutar', 'Ödeme', 'Hesap Kodu', ''].map(h => (
+                {['Fatura No', 'Tarih', 'Tür', 'Taraf', 'Tutar', 'Ödeme', 'Hesap Kodu', 'İşlemler'].map(h => (
                   <th key={h} className="text-left px-4 py-2.5 text-xs text-gray-500 font-medium">{h}</th>
                 ))}
               </tr>
@@ -240,13 +241,12 @@ export default function InvoiceList({ invoices }: Props) {
                     </span>
                   </td>
                   <td className="px-4 py-2.5 text-gray-500 text-xs font-mono">{inv.accounting_code ?? '—'}</td>
-                  <td className="px-4 py-2.5">
-                    <Link href={`/invoices/${inv.id}`}
-                      className="text-gray-400 hover:text-gray-700 transition-colors">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
+                  <td className="px-4 py-2.5 text-right">
+                    <InvoiceRowMenu
+                      invoiceId={inv.id!}
+                      invoiceNumber={inv.invoice_number}
+                      onDeleted={() => router.refresh()}
+                    />
                   </td>
                 </tr>
               ))}

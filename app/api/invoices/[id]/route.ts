@@ -107,12 +107,17 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Yetkisiz' }, { status: 401 })
 
+  await supabase.from('invoice_items').delete().eq('invoice_id', id)
+
   const { error } = await supabase
     .from('invoices')
     .delete()
     .eq('id', id)
     .eq('user_id', user.id)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) {
+    console.error('Delete error:', error)
+    return NextResponse.json({ error: 'Fatura silinemedi' }, { status: 500 })
+  }
   return NextResponse.json({ success: true })
 }
