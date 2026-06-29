@@ -244,7 +244,7 @@ export default function InvoiceList({ invoices }: Props) {
                   <td className="px-4 py-2.5 text-right">
                     <InvoiceRowMenu
                       invoiceId={inv.id!}
-                      invoiceNumber={inv.invoice_number}
+                      partyName={inv.invoice_type === 'purchase' ? inv.seller_name : inv.buyer_name}
                       onDeleted={() => router.refresh()}
                     />
                   </td>

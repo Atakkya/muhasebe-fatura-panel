@@ -7,14 +7,14 @@ import Link from 'next/link'
 
 interface Props {
   invoiceId: string
-  invoiceNumber?: string | null
+  partyName?: string | null
   onDeleted?: () => void
 }
 
 const MENU_HEIGHT = 84
 const MENU_WIDTH = 176
 
-export default function InvoiceRowMenu({ invoiceId, invoiceNumber, onDeleted }: Props) {
+export default function InvoiceRowMenu({ invoiceId, partyName, onDeleted }: Props) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -147,7 +147,7 @@ export default function InvoiceRowMenu({ invoiceId, invoiceNumber, onDeleted }: 
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-1.5">Faturayı sil</h3>
             <p className="text-sm text-slate-500 mb-6">
-              {invoiceNumber ? `"${invoiceNumber}" numaralı fatura` : 'Bu fatura'} kalıcı olarak silinecek.
+              {partyName ? <><strong className="text-slate-700">{partyName}</strong> faturası</> : 'Bu fatura'} kalıcı olarak silinecek.
               Bu işlem geri alınamaz.
             </p>
             <div className="flex gap-3">
