@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fatu — AI-Powered Invoice Management Panel
+
+A full-stack SaaS application that automates Turkish e-invoice processing using Claude AI. Scan a QR code or upload a PDF and the app extracts all invoice data automatically — no manual entry required.
+
+## Features
+
+- **AI Extraction** — Claude Sonnet reads invoices (PDF/image) and fills in all fields automatically: invoice number, ETTN, parties, line items, VAT, totals
+- **QR Code Scanner** — Camera-based QR scanning for Turkish e-invoices
+- **Bulk Upload** — Process multiple invoices at once with per-file status tracking
+- **Party (CRM) Management** — Auto-creates customer/supplier records with running balance calculation
+- **Excel Export** — Two-sheet export: invoice summary + line item details
+- **Dashboard** — Overview of total purchases, sales, and pending payments
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js (App Router) + TypeScript |
+| Styling | Tailwind CSS + Framer Motion |
+| Database | Supabase (PostgreSQL) |
+| Auth | Supabase Auth |
+| AI | Anthropic Claude Sonnet |
+| PDF/QR | pdfjs-dist, @zxing/browser, jsqr |
+| Export | xlsx |
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
+cp .env.example .env.local   # add Supabase and Anthropic keys
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+ANTHROPIC_API_KEY=
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── (auth)/          # login, register
+│   ├── (dashboard)/     # invoices, parties, dashboard
+│   └── api/             # extract, invoices, parties, export
+└── components/          # InvoiceForm, QrScanner, BulkUploadModal, ...
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Screenshots
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> Coming soon
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
